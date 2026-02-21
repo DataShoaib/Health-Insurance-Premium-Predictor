@@ -1,0 +1,9 @@
+stages:
+  Data-Ingesion:
+    cmd: python src.data.data_ingesion
+    deps:
+    - data/raw/insurance.csv
+    - logger/logger.py
+    - src/data/ingesion.py
+    outs:
+    - data/proccessed/cleaned_data.csv
