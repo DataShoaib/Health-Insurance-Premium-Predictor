@@ -1,0 +1,54 @@
+schema: '2.0'
+stages:
+  Data-Ingesion:
+    cmd: python -m src.data.data_ingesion
+    deps:
+    - path: data/raw/insurance.csv
+      hash: md5
+      md5: 3d80b1e2d0b3f849d777ccc59193245a
+      size: 67615
+    - path: logger/logger.py
+      hash: md5
+      md5: 1fe9d70bdf8f09563becc74a11c04afb
+      size: 1353
+    - path: src/data/data_ingesion.py
+      hash: md5
+      md5: e0fe52272ae4073405a6ef3cbca5e757
+      size: 1903
+    outs:
+    - path: data/interim/cleaned_data.csv
+      hash: md5
+      md5: 2c696aa0f85bc634112f2349a55aed45
+      size: 63042
+  Feature-Engineering:
+    cmd: python -m src.features.feature_engineering
+    deps:
+    - path: data/interim/cleaned_data.csv
+      hash: md5
+      md5: 2c696aa0f85bc634112f2349a55aed45
+      size: 63042
+    - path: logger/logger.py
+      hash: md5
+      md5: 1fe9d70bdf8f09563becc74a11c04afb
+      size: 1353
+    - path: src/features/feature_engineering.py
+      hash: md5
+      md5: 4a032f1a1c06b4af9717b65e31854472
+      size: 5189
+    outs:
+    - path: data/proccessed/x_test.csv
+      hash: md5
+      md5: 1ccb9e5d96dffd7e1d502969bea2d2b6
+      size: 16161
+    - path: data/proccessed/x_train.csv
+      hash: md5
+      md5: 2c502224bc87bf22f57a69cbcc688134
+      size: 64259
+    - path: data/proccessed/y_test.csv
+      hash: md5
+      md5: 99f544c7f3049222184fb6c147f40a36
+      size: 2507
+    - path: data/proccessed/y_train.csv
+      hash: md5
+      md5: 8eb52a343883fa8e38c60f74143b7579
+      size: 9981
