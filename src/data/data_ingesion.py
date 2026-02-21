@@ -34,7 +34,7 @@ def data_cleaning(data:pd.DataFrame)->pd.DataFrame:
 def save_cleaned_data(data:pd.DataFrame,data_save_path:str)->None:
     try:
         logger.info(f"trying to save the cleaned data at: {data_save_path}")
-        data_save_raw_path=os.join.path(data_save_path,'raw')
+        data_save_raw_path=os.join.path(data_save_path,'proccessed')
         os.makedirs(data_save_raw_path,exist_ok=True)
         data.to_csv(os.path.join(data_save_raw_path,'cleaned_data.csv'),index=False)
         logger.info(f'cleaned_data saved successfully at: {data_save_raw_path}')
