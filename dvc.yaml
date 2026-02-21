@@ -1,9 +1,20 @@
 stages:
   Data-Ingesion:
-    cmd: python src.data.data_ingesion
+    cmd: python -m src.data.data_ingesion
     deps:
     - data/raw/insurance.csv
     - logger/logger.py
-    - src/data/ingesion.py
+    - src/data/data_ingesion.py
     outs:
-    - data/proccessed/cleaned_data.csv
+    - data/interim/cleaned_data.csv
+  Feature-Engineering:
+    cmd: python -m src.features.feature_engineering
+    deps:
+    - data/interim/cleaned_data.csv
+    - logger/logger.py
+    - src/features/feature_engineering.py
+    outs:
+    - data/proccessed/x_test.csv
+    - data/proccessed/x_train.csv
+    - data/proccessed/y_test.csv
+    - data/proccessed/y_train.csv
