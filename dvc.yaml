@@ -18,3 +18,13 @@ stages:
     - data/proccessed/x_train.csv
     - data/proccessed/y_test.csv
     - data/proccessed/y_train.csv
+  Model-Training:
+    cmd: python -m src.model.model_building
+    deps:
+    - data/proccessed/x_train
+    - data/proccessed/y_train
+    - logger/logger.py
+    - src/features/feature_engineering.py
+    - src/utils.py
+    outs:
+    - models/model.pkl
