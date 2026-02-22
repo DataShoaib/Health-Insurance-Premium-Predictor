@@ -3,6 +3,7 @@ logs/
 # Virtual env
 venv/
 /.env/
+models/
 
 # Python cache
 __pycache__/
