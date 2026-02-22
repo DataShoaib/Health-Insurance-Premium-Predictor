@@ -25,6 +25,7 @@ stages:
     - data/proccessed/y_train.csv
     - logger/logger.py
     - src/features/feature_engineering.py
+    - src/model/model_building.py
     - src/utils.py
     outs:
     - models/model.pkl

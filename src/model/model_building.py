@@ -64,6 +64,11 @@ def main():
         mlflow.sklearn.log_model(model_pipe,'model',input_example=x_train.head(1),signature=signature)
 
         save_model(model_pipe,'models')
+
+        #  Save run_id for evaluation
+        with open("reports/run_id.txt", "w") as f:
+            f.write(run.info.run_id)
+
         logger.info(f'model training is completed with Run id:{run.info.run_id}')
 
 

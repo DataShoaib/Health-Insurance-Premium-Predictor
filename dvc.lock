@@ -71,6 +71,10 @@ stages:
       hash: md5
       md5: f82d64a837353984b607cdf5ba0163a2
       size: 5205
+    - path: src/model/model_building.py
+      hash: md5
+      md5: 0eb9e71f5b396996201e469fbfecdb02
+      size: 2924
     - path: src/utils.py
       hash: md5
       md5: 3764353bd87c79d18ce48fbaa75d8e4f
@@ -78,5 +82,5 @@ stages:
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: 132a2e9d0af5cc7e33cf495fef65184c
-      size: 424376
+      md5: 4463a35b995b06725aa690137dde1b85
+      size: 424375
