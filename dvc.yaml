@@ -29,3 +29,12 @@ stages:
     - src/utils.py
     outs:
     - models/model.pkl
+  Model-Evaluation:
+    cmd: python -m src.evaluation.evaluation.py
+    deps:
+    - data/proccessed/x_test.csv
+    - data/proccessed/y_test.csv
+    - logger/logger.py
+    - models/model.pkl
+    outs:
+    - reports/metrics.json
