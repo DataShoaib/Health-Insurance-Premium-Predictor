@@ -21,8 +21,8 @@ stages:
   Model-Training:
     cmd: python -m src.model.model_building
     deps:
-    - data/proccessed/x_train
-    - data/proccessed/y_train
+    - data/proccessed/x_train.csv
+    - data/proccessed/y_train.csv
     - logger/logger.py
     - src/features/feature_engineering.py
     - src/utils.py

@@ -33,8 +33,8 @@ stages:
       size: 1353
     - path: src/features/feature_engineering.py
       hash: md5
-      md5: 4a032f1a1c06b4af9717b65e31854472
-      size: 5189
+      md5: f82d64a837353984b607cdf5ba0163a2
+      size: 5205
     outs:
     - path: data/proccessed/x_test.csv
       hash: md5
@@ -52,3 +52,31 @@ stages:
       hash: md5
       md5: 8eb52a343883fa8e38c60f74143b7579
       size: 9981
+  Model-Training:
+    cmd: python -m src.model.model_building
+    deps:
+    - path: data/proccessed/x_train.csv
+      hash: md5
+      md5: 2c502224bc87bf22f57a69cbcc688134
+      size: 64259
+    - path: data/proccessed/y_train.csv
+      hash: md5
+      md5: 8eb52a343883fa8e38c60f74143b7579
+      size: 9981
+    - path: logger/logger.py
+      hash: md5
+      md5: 1fe9d70bdf8f09563becc74a11c04afb
+      size: 1353
+    - path: src/features/feature_engineering.py
+      hash: md5
+      md5: f82d64a837353984b607cdf5ba0163a2
+      size: 5205
+    - path: src/utils.py
+      hash: md5
+      md5: 3764353bd87c79d18ce48fbaa75d8e4f
+      size: 633
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 132a2e9d0af5cc7e33cf495fef65184c
+      size: 424376

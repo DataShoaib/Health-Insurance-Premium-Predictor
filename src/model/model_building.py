@@ -22,6 +22,7 @@ def load_data(x_train_path:str,y_train_path:str)->tuple[pd.DataFrame,pd.Series]:
         x_train=pd.read_csv(x_train_path)
         y_train=pd.read_csv(y_train_path)
         logger.info(f'training datav loaded successfully from the {x_train_path} and {y_train_path}')
+        return x_train,y_train
     except FileNotFoundError as e:
         logger.error(f'File not Found at:{x_train_path} and {y_train_path}:{e}')
     except Exception as e:
@@ -57,7 +58,7 @@ def main():
         x_train,y_train=load_data('data/proccessed/x_train.csv','data/proccessed/y_train.csv')
 
         model_pipe=model_training(x_train,y_train)
-        
+
         mlflow.log_params(model_pipe.named_steps['model'].get_params())
         signature=infer_signature(x_train,model_pipe.predict(x_train))
         mlflow.sklearn.log_model(model_pipe,'model',input_example=x_train.head(1),signature=signature)

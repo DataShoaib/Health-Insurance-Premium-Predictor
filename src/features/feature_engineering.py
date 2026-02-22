@@ -67,12 +67,14 @@ def save_split_data(x_train:pd.DataFrame,x_test:pd.DataFrame,y_train:pd.Series,y
         except Exception as e:
             logger.error(f'an error accured while saving the split data:{e}')
 
+def binary_label_encoder(x):
+            return np.where(x == 'Yes', 1, 0)            
+
 
 def pipeline_preprocessor():
     try:
         logger.info('creating preprocessing for the model Pipeline')
-        def binary_label_encoder(x):
-            return np.where(x == 'Yes', 1, 0)
+        
 
         binary_tf = FunctionTransformer(
             binary_label_encoder,
