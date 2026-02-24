@@ -3,17 +3,16 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error,mean_squared_error,r2_score
 from sklearn.pipeline import Pipeline
 from logger.logger import get_logger
-from src.utils import setup_mlflow
 import pickle 
 import os
 import json
 import mlflow
+from src.utils import setup_mlflow
+from mlflow.models.signature import infer_signature
 
 logger=get_logger('Evaluation')
 
 setup_mlflow()
-
-mlflow.set_experiment('final_best_model')
 
 def load_data(x_test_path:str,y_test_path:str)->tuple[pd.DataFrame,pd.Series]:
     try:
@@ -45,14 +44,14 @@ def model_evaluation(model:Pipeline,x_test:pd.DataFrame,y_test:pd.Series)->dict:
         logger.info('model evaluation started')
         y_pred=model.predict(x_test)    
 
-        mae=mean_squared_error(y_test,y_pred)
-        logger.info('mae calculated successfully',mae)
+        mse=mean_squared_error(y_test,y_pred)
+        logger.info(f'mse calculated successfully {mse}')
 
-        mse=mean_absolute_error(y_test,y_pred) 
-        logger.info('mse calculated successfully',mse)
+        mae=mean_absolute_error(y_test,y_pred) 
+        logger.info(f'mae calculated successfully{mae}')
 
         r2_scr=r2_score(y_test,y_pred)
-        logger.info('r2_scr calculated successfully',r2_scr)
+        logger.info(f'r2_scr calculated successfully{r2_scr}')
 
         logger.info('model evaluation completed successfully')
 
@@ -62,6 +61,7 @@ def model_evaluation(model:Pipeline,x_test:pd.DataFrame,y_test:pd.Series)->dict:
         return metrics
     except Exception as e:
         logger.error(f'an error occurred while evaluating the model:{e}')
+        raise
 
 
 def saving_evaluation_metric(metrics:dict,save_metrics_path:str)->None:
@@ -74,26 +74,44 @@ def saving_evaluation_metric(metrics:dict,save_metrics_path:str)->None:
         logger.info(f'metrics saved successfully at the {save_metrics_path}')    
 
     except Exception as e:
-        logger.error(f'an error occurred while saving the metrics:{e}')    
+        logger.error(f'an error occurred while saving the metrics:{e}')   
+        
+
+
+def save_run_info(run_id: str, model_path: str, file_path: str) -> None:
+    try:
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump({"run_id": run_id, "model_path": model_path}, f, indent=4)
+        logger.info(f"Run info saved successfully at {file_path}")
+    except Exception as e:
+        logger.error(f"Failed to save run info:{str(e)}")
+            
 
 
 def main():
+    mlflow.set_experiment('Dvc-Pipeline')
+    with mlflow.start_run(run_name='model') as run:
 
-    with open("reports/run_id.txt") as f:
-        run_id = f.read().strip()
+        save_run_info(run.info.run_id,'model','reports/run_info.json')
 
-    with mlflow.start_run(run_id=run_id):
         x_test,y_test=load_data('data/proccessed/x_test.csv','data/proccessed/y_test.csv')
 
         model=load_model('models/model.pkl')
 
         metrics=model_evaluation(model,x_test,y_test)
-        
+         
+        # loger metrices
         mlflow.log_metrics(metrics)
+        # log params and model
+        mlflow.log_params(model.named_steps['model'].get_params())
+        signature=infer_signature(x_test,model.predict(x_test))
+        mlflow.sklearn.log_model(model,'model',input_example=x_test.head(1),signature=signature)
 
         saving_evaluation_metric(metrics,'reports')
 
-        mlflow.end_run()
+        mlflow.log_artifact('reports/metrics.json')
+
+
 
 if __name__ == "__main__":
     main()        

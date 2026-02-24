@@ -29,7 +29,6 @@ stages:
     - src/utils.py
     outs:
     - models/model.pkl
-    - reports/run_id.txt
   Model-Evaluation:
     cmd: python -m src.evaluation.evaluation
     deps:
@@ -39,3 +38,10 @@ stages:
     - models/model.pkl
     outs:
     - reports/metrics.json
+    - reports/run_info.json
+  Model-Registry:
+    cmd: python -m src.model.model_registry
+    deps:
+    - logger/logger.py
+    - reports/run_info.json
+    - src/model/model_registry.py

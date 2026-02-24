@@ -2,19 +2,13 @@ import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor
 from src.features.feature_engineering import pipeline_preprocessor
 from sklearn.pipeline import Pipeline
-from src.utils import setup_mlflow
 from logger.logger import get_logger
-import mlflow
-import mlflow.sklearn
-from mlflow.models.signature import infer_signature
 import os
 import pickle
 
 logger=get_logger('model_building')
 
-setup_mlflow()
 
-mlflow.set_experiment('final_best_model')
 
 def load_data(x_train_path:str,y_train_path:str)->tuple[pd.DataFrame,pd.Series]:
     try:
@@ -53,24 +47,12 @@ def save_model(model:Pipeline,save_model_path:str)->None:
 
 
 def main():
-    with mlflow.start_run() as run:
+   
+    x_train,y_train=load_data('data/proccessed/x_train.csv','data/proccessed/y_train.csv')
 
-        x_train,y_train=load_data('data/proccessed/x_train.csv','data/proccessed/y_train.csv')
+    model_pipe=model_training(x_train,y_train)
 
-        model_pipe=model_training(x_train,y_train)
-
-        mlflow.log_params(model_pipe.named_steps['model'].get_params())
-        signature=infer_signature(x_train,model_pipe.predict(x_train))
-        mlflow.sklearn.log_model(model_pipe,'model',input_example=x_train.head(1),signature=signature)
-
-        save_model(model_pipe,'models')
-
-        #  Save run_id for evaluation
-        with open("reports/run_id.txt", "w") as f:
-            f.write(run.info.run_id)
-
-        logger.info(f'model training is completed with Run id:{run.info.run_id}')
-
+    save_model(model_pipe,'models')
 
 if __name__=='__main__':
     main()
