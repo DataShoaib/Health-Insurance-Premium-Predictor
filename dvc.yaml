@@ -2,46 +2,52 @@ stages:
   Data-Ingesion:
     cmd: python -m src.data.data_ingesion
     deps:
-    - data/raw/insurance.csv
-    - logger/logger.py
-    - src/data/data_ingesion.py
+      - data/raw/insurance.csv
+      - logger/logger.py
+      - src/data/data_ingesion.py
     outs:
-    - data/interim/cleaned_data.csv
+      - data/interim/cleaned_data.csv
+
   Feature-Engineering:
     cmd: python -m src.features.feature_engineering
     deps:
-    - data/interim/cleaned_data.csv
-    - logger/logger.py
-    - src/features/feature_engineering.py
+      - data/interim/cleaned_data.csv
+      - logger/logger.py
+      - src/features/feature_engineering.py
     outs:
-    - data/proccessed/x_test.csv
-    - data/proccessed/x_train.csv
-    - data/proccessed/y_test.csv
-    - data/proccessed/y_train.csv
+      - data/proccessed/x_test.csv
+      - data/proccessed/x_train.csv
+      - data/proccessed/y_test.csv
+      - data/proccessed/y_train.csv
+
   Model-Training:
     cmd: python -m src.model.model_building
     deps:
-    - data/proccessed/x_train.csv
-    - data/proccessed/y_train.csv
-    - logger/logger.py
-    - src/features/feature_engineering.py
-    - src/model/model_building.py
-    - src/utils.py
+      - data/proccessed/x_train.csv
+      - data/proccessed/y_train.csv
+      - logger/logger.py
+      - src/features/feature_engineering.py
+      - src/model/model_building.py
+      - src/utils.py
     outs:
-    - models/model.pkl
+      - models/model.pkl
+      - reports/run_info.json 
+
   Model-Evaluation:
     cmd: python -m src.evaluation.evaluation
     deps:
-    - data/proccessed/x_test.csv
-    - data/proccessed/y_test.csv
-    - logger/logger.py
-    - models/model.pkl
+      - data/proccessed/x_test.csv
+      - data/proccessed/y_test.csv
+      - src/evaluation/evaluation.py
+      - logger/logger.py
+      - models/model.pkl
+      - reports/run_info.json  
     outs:
-    - reports/metrics.json
-    - reports/run_info.json
+      - reports/metrics.json
+
   Model-Registry:
     cmd: python -m src.model.model_registry
     deps:
-    - logger/logger.py
-    - reports/run_info.json
-    - src/model/model_registry.py
+      - logger/logger.py
+      - reports/run_info.json
+      - src/model/model_registry.py
