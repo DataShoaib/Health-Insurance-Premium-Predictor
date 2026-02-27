@@ -2,9 +2,12 @@
 logs/
 # Virtual env
 venv/
-/.env/
+.env
 models/
 
 # Python cache
 __pycache__/
 *.pyc
+
+./data/
+# !./data/.dvc
