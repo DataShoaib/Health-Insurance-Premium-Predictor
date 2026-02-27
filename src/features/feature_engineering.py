@@ -16,8 +16,10 @@ def load_cleaned_data(data_path:str)->pd.DataFrame:
         return cleaned_data
     except FileNotFoundError as e:
         logger.error(f'File not found from the {data_path}:{e}')
+        raise
     except Exception as e:
         logger.error(f'an error accured while loading the cleaned data:{e}')
+        raise
 
 
 def feature_Construction(data:pd.DataFrame)->pd.DataFrame:
@@ -40,6 +42,7 @@ def feature_Construction(data:pd.DataFrame)->pd.DataFrame:
         return data
     except Exception as e:
         logger.error(f'an error accured while feature engineering the data:{e}')
+        raise
 
 
 def spliting_data(data:pd.DataFrame)->tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
@@ -53,6 +56,7 @@ def spliting_data(data:pd.DataFrame)->tuple[pd.DataFrame, pd.DataFrame, pd.Serie
         return x_train,x_test,y_train,y_test
     except Exception as e:
         logger.error(f'an error accured while the train test split')
+        raise
 
 def save_split_data(x_train:pd.DataFrame,x_test:pd.DataFrame,y_train:pd.Series,y_test:pd.Series,save_data_path:str)->None:
         try:
@@ -66,6 +70,7 @@ def save_split_data(x_train:pd.DataFrame,x_test:pd.DataFrame,y_train:pd.Series,y
             logger.info(f'split data saved successfully at :{save_data_final_path}')
         except Exception as e:
             logger.error(f'an error accured while saving the split data:{e}')
+            raise
 
 def binary_label_encoder(x):
             return np.where(x == 'Yes', 1, 0)            

@@ -14,8 +14,10 @@ def data_load(data_path:str)->pd.DataFrame:
         return data
     except FileNotFoundError as e:
         logger.error(f"File not found :{e}")
+        raise
     except Exception as e:
         logger.error(f'an error accurred while loading the data:{e}')
+        raise
 
 
 def data_cleaning(data:pd.DataFrame)->pd.DataFrame:
