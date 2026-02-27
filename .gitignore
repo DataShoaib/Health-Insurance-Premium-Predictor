@@ -9,5 +9,5 @@ models/
 __pycache__/
 *.pyc
 
-./data/
+data/
 # !./data/.dvc
