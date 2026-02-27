@@ -4,23 +4,23 @@ import numpy as np
 from src.features.feature_engineering import load_cleaned_data,feature_Construction,spliting_data,save_split_data,pipeline_preprocessor
     
 
-# -------------------------------
+
 # Fixture: reusable sample CSV
-# -------------------------------
+
 @pytest.fixture
 def sample_cleaned_csv(tmp_path):
     file = tmp_path / "cleaned.csv"
     df = pd.DataFrame({
-        "Id": [1, 2, 3],
-        "age": [25, 50, 40],
-        "gender": ["M", "F", "M"],
-        "bmi": [22.5, 31.0, 27.0],
-        "bloodpressure": [120, 140, 130],
-        "diabetic": [0, 1, 0],
-        "children": [0, 2, 1],
-        "smoker": ["Yes", "No", "Yes"],
-        "region": ["NE", "SW", "NW"],
-        "claim": [0, 1, 0]
+        "Id": [1,2,3,4,5],
+        "age": [39.0, 24.0, None, None, None],
+        "gender": ["male","male","male","male","male"],
+        "bmi": [23.2,30.1,33.3,33.7,34.1],
+        "bloodpressure": [91,87,82,80,100],
+        "diabetic": ["Yes","No","Yes","No","No"],
+        "children": [0,0,0,0,0],
+        "smoker": ["No","No","No","No","No"],
+        "region": ["southeast","southeast","southeast","northwest","northwest"],
+        "claim": [1121.87,1131.51,1135.94,1136.4,1137.01]
     })
     df.to_csv(file, index=False)
     return file
@@ -30,7 +30,7 @@ def sample_cleaned_csv(tmp_path):
 
 def test_load_cleaned_data(sample_cleaned_csv):
     df = load_cleaned_data(sample_cleaned_csv)
-    assert df.shape[0] == 3
+    assert df.shape[0] == 5
     assert "bmi" in df.columns
 
 def test_feature_construction(sample_cleaned_csv):
@@ -69,6 +69,7 @@ def test_pipeline_preprocessor_creation():
     names = [name for name, _, _ in preprocessor.transformers]
     for expected in ["num", "ohe", "ordinal", "binary"]:
         assert expected in names
+        
 
 # Exception tests
 

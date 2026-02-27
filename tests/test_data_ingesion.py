@@ -6,17 +6,18 @@ from src.data.data_ingesion import data_load, data_cleaning
 def sample_csv(tmp_path):
     file = tmp_path / "sample.csv"
     df = pd.DataFrame({
-        "Id": [1, 2, 3],
-        "age": [25, 30, None],
-        "gender": ["M", "F", "M"],
-        "bmi": [22.5, 27.3, 24.0],
-        "bloodpressure": [120, 130, 125],
-        "diabetic": [0, 1, 0],
-        "children": [0, 2, 1],
-        "smoker": [0, 1, 0],
-        "region": ["NE", "SW", "NW"],
-        "claim": [0, 1, 0]
+        "Id": [1,2,3,4,5],
+        "age": [39.0, 24.0, None, None, None],
+        "gender": ["male","male","male","male","male"],
+        "bmi": [23.2,30.1,33.3,33.7,34.1],
+        "bloodpressure": [91,87,82,80,100],
+        "diabetic": ["Yes","No","Yes","No","No"],
+        "children": [0,0,0,0,0],
+        "smoker": ["No","No","No","No","No"],
+        "region": ["southeast","southeast","southeast","northwest","northwest"],
+        "claim": [1121.87,1131.51,1135.94,1136.4,1137.01]
     })
+    
     df.to_csv(file, index=False)
     return file
 
