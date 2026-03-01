@@ -11,7 +11,6 @@ from src.utils import setup_mlflow
 import json
 
 logger = get_logger('model_building')
-setup_mlflow()
 
 
 def load_data(x_train_path: str, y_train_path: str) -> tuple[pd.DataFrame, pd.Series]:
@@ -61,6 +60,8 @@ def save_run_info(run_id: str, model_path: str, file_path: str) -> None:
 
 def main():
     try:
+        setup_mlflow()
+
         mlflow.set_experiment('insurance-Predictor-Final')
 
         with mlflow.start_run(run_name='training') as run:
@@ -83,7 +84,6 @@ def main():
     except Exception as e:
         logger.error(f'training stage failed: {e}')
         raise
-
 
 if __name__ == '__main__':
     main()

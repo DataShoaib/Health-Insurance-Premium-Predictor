@@ -17,8 +17,11 @@ def setup_mlflow():
         raise EnvironmentError("MLFLOW_TRACKING_URI is not set")
 
     # Set credentials first
-    os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+    os.environ["MLFLOW_TRACKING_USERNAME"] = "DataShoaib"
     os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
     # Then set tracking URI
     mlflow.set_tracking_uri(tracking_uri)
+
+    # FIX: Set registry URI so MLflow resolves models:/ via DagsHub, not local Windows path
+    mlflow.set_registry_uri(tracking_uri)
