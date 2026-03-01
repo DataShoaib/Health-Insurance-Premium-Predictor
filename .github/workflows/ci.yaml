@@ -30,12 +30,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Pull DVC data
+        run: dvc pull
+  
+
       - name: Run DVC Pipeline
         env:
-          MLFLOW_TRACKING_URI: https://dagshub.com/owner/repo.mlflow
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
-          DAGSHUB_TOKEN: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: dvc repro
 
       - name: Run tests
