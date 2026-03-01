@@ -1,0 +1,59 @@
+name: CI-Pipeline
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+  steps:
+
+    - name: checkput code
+    - uses: actions/checkout@v3
+
+    - name: setup python
+    - uses: actions/setup-python@v4
+      with:
+      python-version: '3.12'
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-  
+
+    - name: Install dependencies 
+      run: |
+        pip Install -r requirements.txt
+
+    - name: Run dvc Pipeline
+      env:
+        MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+        MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+      run: |  
+        dvc repro
+
+    - name: run tests
+      env:
+        MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+        MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+      run: |
+        pytest  
+
+    - name: promote-model-production 
+      env:
+        MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+        MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+      run: |
+        python -m scripts.model_promote.py
+           
+
+
+    
+
+
