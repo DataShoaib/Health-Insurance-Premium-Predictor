@@ -12,18 +12,17 @@ model=load_model(settings.model_path)
 
 @app.get('/Health')
 def Health_check():
-    return {'status':'Health-Insurance-Premium-Predictor is runnig '}
+    return {"status":"Health-Insurance-Premium-Predictor is running"}
 
 import pandas as pd
 
-@app.post("/predict")
+@app.post("/predict", response_model=response)
 def model_prediction(data: Inputdata):
-
     input_dict = data.model_dump()
 
-    # Convert to 1 row dataframe
+    # Convert to 1-row dataframe
     df = pd.DataFrame([input_dict])
 
-    response = predict(model, df)
+    pred = float(predict(model, df)[0])
 
-    return {"prediction": response.tolist()}
+    return {"claim": pred}
