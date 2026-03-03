@@ -60,9 +60,8 @@ def save_run_info(run_id: str, model_path: str, file_path: str) -> None:
 
 def main():
     try:
-        setup_mlflow()
-
-        mlflow.set_experiment('insurance-Predictor-Final')
+        if setup_mlflow():
+          mlflow.set_experiment("insurance-Predictor-Final")
 
         with mlflow.start_run(run_name='training') as run:
 
