@@ -10,8 +10,6 @@ import mlflow
 from src.utils import setup_mlflow
 
 logger = get_logger('Evaluation')
-setup_mlflow()
-
 
 def load_data(x_test_path: str, y_test_path: str):
     try:
@@ -65,6 +63,7 @@ def save_metrics(metrics: dict, save_path: str) -> None:
 
 def main():
     try:
+        setup_mlflow()
         run_info = json.load(open('reports/run_info.json'))
         run_id = run_info['run_id']
 
