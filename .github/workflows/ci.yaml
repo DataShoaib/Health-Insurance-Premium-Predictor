@@ -56,7 +56,7 @@ jobs:
 
 
       - name: promoting model to production
-        run: python -m scripts.model_promote.py
+        run: python -m scripts.model_promote
         env:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TRACKING_PASSWORD }}
