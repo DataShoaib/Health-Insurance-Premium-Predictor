@@ -40,17 +40,24 @@ jobs:
       - name: Pull Data from S3
         run: dvc pull
 
-      - name: DVC-Pipeline
+      - name: DVC-P
         run: dvc repro
         env:
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           DAGSHUB_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TRACKING_PASSWORD }}
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
 
       - name: Run Tests
         run: pytest
         env:
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           DAGSHUB_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TRACKING_PASSWORD }}
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+
 
       - name: promoting model to production
         run: python -m scripts.model_promote.py
         env:
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           DAGSHUB_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TRACKING_PASSWORD }}
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
