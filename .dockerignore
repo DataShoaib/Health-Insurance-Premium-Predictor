@@ -1,0 +1,11 @@
+data/
+notebook/
+tests/
+scripts/
+reports/
+venv/
+.git/
+mlruns/
+__pycache__/
+*.ipynb
+dvc.*
