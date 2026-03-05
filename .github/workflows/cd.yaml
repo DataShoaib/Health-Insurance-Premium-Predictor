@@ -67,3 +67,5 @@ jobs:
 
             docker run -d -p 8000:8000 --name mlops-api \
             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-north-1.amazonaws.com/my-mlops-api:latest
+
+            
