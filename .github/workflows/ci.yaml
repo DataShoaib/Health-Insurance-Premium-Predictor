@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]   
 
 jobs:
   build:
@@ -40,8 +40,7 @@ jobs:
       - name: Pull Data from S3
         run: dvc pull
 
-      - name: DVC-PIPELINE
-        if: success()
+      - name: Run DVC Pipeline
         run: dvc repro
         env:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
@@ -49,15 +48,13 @@ jobs:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
 
       - name: Run Tests
-        if: success()
         run: pytest
         env:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TRACKING_PASSWORD }}
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
 
-      - name: Promoting model to production
-        if: success()
+      - name: Promote model to production
         run: python -m scripts.model_promote
         env:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
