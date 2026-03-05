@@ -10,7 +10,7 @@ app=FastAPI(title=settings.app_name,version=settings.version)
 
 model=load_model(settings.model_path)
 
-@app.get('/Health')
+@app.get('/')
 def Health_check():
     return {"status":"Health-Insurance-Premium-Predictor is running"}
 
