@@ -5,7 +5,7 @@ import requests
 client=TestClient(app)
 
 def test_api():
-    response=client.get("/Health")
+    response=client.get("/")
     assert response.json()== {"status":"Health-Insurance-Premium-Predictor is running"}
     assert response.status_code==200
 
