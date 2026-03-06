@@ -10,7 +10,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    # ✅ KEY FIX: Sirf tab deploy ho jab CI Pipeline SUCCESS ho
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
