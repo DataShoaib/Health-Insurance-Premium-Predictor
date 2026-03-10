@@ -16,32 +16,13 @@
 
 ## 📸 Project Showcase
 
-<table>
-<tr>
-<td align="center">
-<b>FastAPI Live on AWS EC2</b><br>
-<img src="screenshots/image1.png" width="450">
-</td>
+| FastAPI Live on AWS EC2 | Health Insurance Prediction UI |
+|:-:|:-:|
+| <img src="screenshots/image1.png" width="450"/> | <img src="screenshots/image2.png" width="450"/> |
 
-<td align="center">
-<b>Health Insurance Prediction UI</b><br>
-<img src="screenshots/image2.png" width="450">
-</td>
-</tr>
-
-<tr>
-<td align="center">
-<b>AWS ECR — Docker Image Registry</b><br>
-<img src="screenshots/image3.png" width="450">
-</td>
-
-<td align="center">
-<b>EC2 Security Group Rules</b><br>
-<img src="screenshots/image4.png" width="450">
-</td>
-</tr>
-</table>
-
+| AWS ECR — Docker Image Registry | EC2 Security Group Rules |
+|:-:|:-:|
+| <img src="screenshots/image3.png" width="450"/> | <img src="image4.png" width="450"/> |
 ## 🧩 Business Problem
 
 ### The Challenge
