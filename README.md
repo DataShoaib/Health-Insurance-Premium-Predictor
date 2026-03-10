@@ -18,11 +18,11 @@
 
 | FastAPI Live on AWS EC2 | Health Insurance Prediction UI |
 |:-:|:-:|
-| ![API Docs](screenshots/api_docs.png) | ![Frontend UI](screenshots/frontend_ui.png) |
+| ![API Docs](screenshots/Screenshot 2026-03-06 181431.png) | ![Frontend UI](screenshots/Screenshot 2026-03-10 202524.png) |  
 
 | AWS ECR — Docker Image Registry | EC2 Security Group Rules |
 |:-:|:-:|
-| ![ECR](screenshots/ecr_registry.png) | ![Security Group](screenshots/security_group.png) |
+| ![ECR](screenshots/Screenshot 2026-03-06 180341.png) | ![Security Group](screenshots/Screenshot 2026-03-06 173236.png) |
 
 ---
 
