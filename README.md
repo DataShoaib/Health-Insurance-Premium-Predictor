@@ -16,15 +16,31 @@
 
 ## 📸 Project Showcase
 
-| FastAPI Live on AWS EC2 | Health Insurance Prediction UI |
-|:-:|:-:|
-| ![API Docs](screenshots/Screenshot 2026-03-06 181431.png) | ![Frontend UI](screenshots/Screenshot 2026-03-10 202524.png) |  
+<table>
+<tr>
+<td align="center">
+<b>FastAPI Live on AWS EC2</b><br>
+<img src="screenshots/image1.png" width="450">
+</td>
 
-| AWS ECR — Docker Image Registry | EC2 Security Group Rules |
-|:-:|:-:|
-| ![ECR](screenshots/Screenshot 2026-03-06 180341.png) | ![Security Group](screenshots/Screenshot 2026-03-06 173236.png) |
+<td align="center">
+<b>Health Insurance Prediction UI</b><br>
+<img src="screenshots/image2.png" width="450">
+</td>
+</tr>
 
----
+<tr>
+<td align="center">
+<b>AWS ECR — Docker Image Registry</b><br>
+<img src="screenshots/image3.png" width="450">
+</td>
+
+<td align="center">
+<b>EC2 Security Group Rules</b><br>
+<img src="screenshots/image4.png" width="450">
+</td>
+</tr>
+</table>
 
 ## 🧩 Business Problem
 
