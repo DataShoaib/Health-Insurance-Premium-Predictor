@@ -33,7 +33,7 @@ jobs:
 
       - name: Install DVC
         run: pip install dvc[s3]
-        
+
 
       # Pull trained model — required for docker build COPY models ./models
       - name: Pull model from S3
@@ -85,9 +85,9 @@ jobs:
             export AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}
 
             # Restart all containers with latest image
-            docker-compose down || true
-            docker-compose pull app
-            docker-compose up -d
+            docker compose down || true
+            docker compose pull app
+            docker compose up -d
 
             # Health check
             sleep 5
