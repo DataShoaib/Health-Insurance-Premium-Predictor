@@ -33,6 +33,7 @@ jobs:
 
       - name: Install DVC
         run: pip install dvc[s3]
+        
 
       # Pull trained model — required for docker build COPY models ./models
       - name: Pull model from S3
