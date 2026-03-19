@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+
+  # FastAPI app — image is pulled from ECR (pushed via CD pipeline)
+  app:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/my-mlops-api:latest
+    container_name: mlops-api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - monitoring-net
+
+
+  # Prometheus — collects metrics from the app (/metrics endpoint every ~15s)
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      # Mount local prometheus.yml into container (read-only)
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    restart: unless-stopped
+    depends_on:
+      - app
+    networks:
+      - monitoring-net
+
+
+  # Grafana — used to visualize metrics coming from Prometheus
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      # Default login (can be changed later)
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      # Keeps dashboards/data even after restart
+      - grafana_storage:/var/lib/grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring-net
+
+
+# All services are on the same network so they can talk using service names
+networks:
+  monitoring-net:
+    driver: bridge
+
+
+# Persistent storage for Grafana (data won't be lost after restart)
+volumes:
+  grafana_storage:
