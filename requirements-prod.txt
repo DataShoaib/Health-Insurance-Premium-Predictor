@@ -7,3 +7,4 @@ pandas
 scikit-learn
 joblib
 python-dotenv
+prometheus-client==0.20.0
