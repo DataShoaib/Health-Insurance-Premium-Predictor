@@ -82,11 +82,11 @@ stages:
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: 3760e4aa6e42558ac4a659f0ec087ffc
+      md5: f0996bf23541690ae544a670775089c3
       size: 421598
     - path: reports/run_info.json
       hash: md5
-      md5: 6901a83163c0b826947746c62d9a2798
+      md5: 9cd6f7019b647838325481161f399be9
       size: 82
   Model-Evaluation:
     cmd: python -m src.evaluation.evaluation
@@ -105,11 +105,11 @@ stages:
       size: 1353
     - path: models/model.pkl
       hash: md5
-      md5: 3760e4aa6e42558ac4a659f0ec087ffc
+      md5: f0996bf23541690ae544a670775089c3
       size: 421598
     - path: reports/run_info.json
       hash: md5
-      md5: 6901a83163c0b826947746c62d9a2798
+      md5: 9cd6f7019b647838325481161f399be9
       size: 82
     - path: src/evaluation/evaluation.py
       hash: md5
@@ -118,8 +118,8 @@ stages:
     outs:
     - path: reports/metrics.json
       hash: md5
-      md5: bfed51dd2820ba075a44b5d4afe331d5
-      size: 100
+      md5: 7a35f18da8cbaa3928ccd9721c04a496
+      size: 101
   model-registry:
     cmd: python -m src.model.model_registry
   Model-Registry:
@@ -131,7 +131,7 @@ stages:
       size: 1353
     - path: reports/run_info.json
       hash: md5
-      md5: 6901a83163c0b826947746c62d9a2798
+      md5: 9cd6f7019b647838325481161f399be9
       size: 82
     - path: src/model/model_registry.py
       hash: md5
