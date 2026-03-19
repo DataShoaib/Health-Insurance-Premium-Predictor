@@ -1,29 +1,23 @@
 name: CD Pipeline
 
-
 on:
   workflow_run:
-    workflows: ["CI Pipeline"]      # Trigger CD after CI completes
+    workflows: ["CI Pipeline"]
     types:
       - completed
-
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    # Run only if CI pipeline succeeded
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
 
     steps:
 
-      # -------------------- SOURCE CODE --------------------
+      # Checkout source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-
-      # -------------------- AWS SETUP --------------------
+      # Configure AWS access
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -31,85 +25,69 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
+      # DVC needs Python to pull model from S3
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
 
-      # -------------------- ECR LOGIN --------------------
+      - name: Install DVC
+        run: pip install dvc[s3]
+
+      # Pull trained model — required for docker build COPY models ./models
+      - name: Pull model from S3
+        run: dvc pull
+
+      # Authenticate Docker with ECR
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} \
           | docker login --username AWS --password-stdin \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
-
-      # -------------------- BUILD & PUSH IMAGE --------------------
+      # Build, tag and push image to ECR
       - name: Build Docker image
-        run: |
-          docker build -t my-mlops-api .
-
+        run: docker build -t my-mlops-api .
 
       - name: Tag Docker image
         run: |
           docker tag my-mlops-api:latest \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/my-mlops-api:latest
 
-
       - name: Push image to ECR
         run: |
           docker push \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/my-mlops-api:latest
 
-
-      # -------------------- DEPLOY ON EC2 --------------------
+      # SSH into EC2 and deploy all containers
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-
           script: |
 
-            # Step 1: Login to ECR from EC2
-            # Required so EC2 can pull the latest Docker image
+            # Login to ECR from EC2
             aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} \
             | docker login --username AWS --password-stdin \
             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
+            # Move to project directory
+            cd /home/ubuntu/app/Health-Insurance-Premium-Predictor
 
-            # Step 2: Move to project directory
-            # This folder contains docker-compose.yml
-            cd /home/ubuntu/app
-
-
-            # Step 3: Pull latest code
-            # Updates docker-compose or config changes if any
+            # Pull latest code changes
             git pull origin master
 
-
-            # Step 4: Set required environment variables
-            # Used inside docker-compose.yml
+            # Set env vars used in docker-compose.yml
             export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
             export AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}
 
-
-            # Step 5: Stop existing containers
-            # Prevents conflicts with new containers
+            # Restart all containers with latest image
             docker-compose down || true
-
-
-            # Step 6: Pull latest app image from ECR
-            # Only 'app' service is pulled (others use public images)
             docker-compose pull app
-
-
-            # Step 7: Start all services
-            # Runs app + Prometheus + Grafana in background
             docker-compose up -d
 
-
-            # Step 8: Wait for services to start
+            # Health check
             sleep 5
-
-
-            # Step 9: Health check
-            # Fails deployment if app is not running properly
             curl -f http://localhost:8000/ || exit 1
