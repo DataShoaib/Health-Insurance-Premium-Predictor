@@ -1,65 +1,115 @@
 name: CD Pipeline
 
+
 on:
   workflow_run:
-    workflows: ["CI Pipeline"]
+    workflows: ["CI Pipeline"]      # Trigger CD after CI completes
     types:
       - completed
+
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    # Run only if CI pipeline succeeded
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    
+
 
     steps:
-      - name: Checkout Code
+
+      # -------------------- SOURCE CODE --------------------
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
+
+      # -------------------- AWS SETUP --------------------
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
+
+      # -------------------- ECR LOGIN --------------------
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} \
           | docker login --username AWS --password-stdin \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
-      - name: Build Docker Image
+
+      # -------------------- BUILD & PUSH IMAGE --------------------
+      - name: Build Docker image
         run: |
           docker build -t my-mlops-api .
 
-      - name: Tag Docker Image
+
+      - name: Tag Docker image
         run: |
           docker tag my-mlops-api:latest \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/my-mlops-api:latest
 
-      - name: Push Image to ECR
+
+      - name: Push image to ECR
         run: |
           docker push \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/my-mlops-api:latest
 
+
+      # -------------------- DEPLOY ON EC2 --------------------
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+
           script: |
+
+            # Step 1: Login to ECR from EC2
+            # Required so EC2 can pull the latest Docker image
             aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} \
             | docker login --username AWS --password-stdin \
             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
-            docker pull \
-            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/my-mlops-api:latest
 
-            docker stop mlops-api || true
-            docker rm mlops-api || true
+            # Step 2: Move to project directory
+            # This folder contains docker-compose.yml
+            cd /home/ubuntu/app
 
-            docker run -d -p 8000:8000 --name mlops-api \
-            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/my-mlops-api:latest
+
+            # Step 3: Pull latest code
+            # Updates docker-compose or config changes if any
+            git pull origin master
+
+
+            # Step 4: Set required environment variables
+            # Used inside docker-compose.yml
+            export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
+            export AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}
+
+
+            # Step 5: Stop existing containers
+            # Prevents conflicts with new containers
+            docker-compose down || true
+
+
+            # Step 6: Pull latest app image from ECR
+            # Only 'app' service is pulled (others use public images)
+            docker-compose pull app
+
+
+            # Step 7: Start all services
+            # Runs app + Prometheus + Grafana in background
+            docker-compose up -d
+
+
+            # Step 8: Wait for services to start
+            sleep 5
+
+
+            # Step 9: Health check
+            # Fails deployment if app is not running properly
+            curl -f http://localhost:8000/ || exit 1
