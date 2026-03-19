@@ -1,0 +1,11 @@
+global:
+  # Har 15 second mein Prometheus jaayega /metrics pe aur data collect karega
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "health-insurance-predictor"
+    static_configs:
+      # "app" yahan docker-compose service ka naam hai
+      # teeno containers ek hi network mein hain isliye naam se resolve hota hai
+      - targets: ["app:8000"]
+    metrics_path: "/metrics"
