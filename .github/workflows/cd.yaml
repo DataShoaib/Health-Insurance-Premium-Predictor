@@ -90,5 +90,5 @@ jobs:
             docker compose up -d
 
             # Health check
-            sleep 5
+            sleep 15
             curl -f http://localhost:8000/ || exit 1
