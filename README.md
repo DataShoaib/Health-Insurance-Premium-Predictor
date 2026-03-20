@@ -42,7 +42,7 @@
 
 ## Demo
 
-<video src="docs/demo/demo_video.mp4" controls width="100%"></video>
+![Demo](docs/demo/demo.gif)
 
 ---
 
